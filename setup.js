@@ -1,14 +1,9 @@
-//Amount of columns
 export const GRID_SIZE = 20;
-//Cell Size in the grid in pixels
 export const CELL_SIZE = 20;
 export const DIRECTIONS = {
     ArrowLeft: {
-        // key Code for the key we press
         code: 37,
-        // direction movies
         movement: -1,
-        // rotate of pacman
         rotation: 180
     },
     ArrowUp: {
@@ -32,12 +27,10 @@ export const OBJECT_TYPE = {
     BLANK: 'blank',
     WALL: 'wall',
     DOT: 'dot',
-    //Ghosts in the game
     BLINKY: 'blinky',
     PINKY: 'pinky',
     INKY: 'inky',
     CLYDE: 'clyde',
-    //pacman eating
     PILL: 'pill',
     PACMAN: 'pacman',
     GHOST: 'ghost',
