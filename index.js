@@ -1,41 +1,41 @@
 import { LEVEL, OBJECT_TYPE } from './setup.js';
-
-//classes
+import { randomMovement } from './ghostmoves.js';
+// Classes
 import GameBoard from './GameBoard.js';
 import Pacman from './Pacman.js';
 import Ghost from './Ghost.js';
-import { randomMovement } from './ghostmoves.js';
-
+/*
 // Sounds
 import soundDot from './sounds/munch.wav';
 import soundPill from './sounds/pill.wav';
 import soundGameStart from './sounds/game_start.wav';
 import soundGameOver from './sounds/death.wav';
 import soundGhost from './sounds/eat_ghost.wav';
-
-//Dom Elements
+*/
+// Dom Elements
 const gameGrid = document.querySelector('#game');
 const scoreTable = document.querySelector('#score');
 const startButton = document.querySelector('#start-button');
-//Game constants
-const POWE_PILL_TIME = 10000; //ms
-const GLOBAL_SPEED = 80; //ms
+// Game constants
+const POWER_PILL_TIME = 10000; // ms
+const GLOBAL_SPEED = 80; // ms
 const gameBoard = GameBoard.createGameBoard(gameGrid, LEVEL);
-//Initial setup
+// Initial setup
 let score = 0;
 let timer = null;
 let gameWin = false;
-let powePillActive = false;
+let powerPillActive = false;
 let powerPillTimer = null;
-
+/*
 // --- AUDIO --- //
 function playAudio(audio) {
     const soundEffect = new Audio(audio);
     soundEffect.play();
 }
-
+*/
+// --- GAME CONTROLLER --- //
 function gameOver(pacman, grid) {
-    playAudio(soundGameOver);
+    //playAudio(soundGameOver);
 
     document.removeEventListener('keydown', (e) =>
         pacman.handleKeyInput(e, gameBoard.objectExist.bind(gameBoard))
@@ -47,7 +47,6 @@ function gameOver(pacman, grid) {
     // Show startbutton
     startButton.classList.remove('hide');
 }
-
 
 function checkCollision(pacman, ghosts) {
     const collidedGhost = ghosts.find((ghost) => pacman.pos === ghost.pos);
@@ -70,13 +69,18 @@ function checkCollision(pacman, ghosts) {
     }
 }
 
-function gameloop(pacman, ghosts) {
+function gameLoop(pacman, ghosts) {
+    // 1. Move Pacman
     gameBoard.moveCharacter(pacman);
+    // 2. Check Ghost collision on the old positions
     checkCollision(pacman, ghosts);
-    ghosts.forEach(ghost => gameBoard.moveCharacter(ghost));
+    // 3. Move ghosts
+    ghosts.forEach((ghost) => gameBoard.moveCharacter(ghost));
+    // 4. Do a new ghost collision check on the new positions
     checkCollision(pacman, ghosts);
+    // 5. Check if Pacman eats a dot
     if (gameBoard.objectExist(pacman.pos, OBJECT_TYPE.DOT)) {
-        playAudio(soundDot);
+        // playAudio(soundDot);
 
         gameBoard.removeObject(pacman.pos, [OBJECT_TYPE.DOT]);
         // Remove a dot
@@ -86,7 +90,7 @@ function gameloop(pacman, ghosts) {
     }
     // 6. Check if Pacman eats a power pill
     if (gameBoard.objectExist(pacman.pos, OBJECT_TYPE.PILL)) {
-        playAudio(soundPill);
+        //  playAudio(soundPill);
 
         gameBoard.removeObject(pacman.pos, [OBJECT_TYPE.PILL]);
 
@@ -113,13 +117,13 @@ function gameloop(pacman, ghosts) {
     scoreTable.innerHTML = score;
 }
 
-
-
 function startGame() {
-    playAudio(soundGameStart);
+    //playAudio(soundGameStart);
+
     gameWin = false;
-    powePillActive = false;
+    powerPillActive = false;
     score = 0;
+
     startButton.classList.add('hide');
 
     gameBoard.createGrid(LEVEL);
@@ -129,15 +133,17 @@ function startGame() {
     document.addEventListener('keydown', (e) =>
         pacman.handleKeyInput(e, gameBoard.objectExist.bind(gameBoard))
     );
+
     const ghosts = [
         new Ghost(5, 188, randomMovement, OBJECT_TYPE.BLINKY),
-        new Ghost(5, 188, randomMovement, OBJECT_TYPE.PINKY),
-        new Ghost(5, 188, randomMovement, OBJECT_TYPE.INKY),
-        new Ghost(5, 188, randomMovement, OBJECT_TYPE.CLYDE)
+        new Ghost(4, 209, randomMovement, OBJECT_TYPE.PINKY),
+        new Ghost(3, 230, randomMovement, OBJECT_TYPE.INKY),
+        new Ghost(2, 251, randomMovement, OBJECT_TYPE.CLYDE)
     ];
-    timer = setInterval(() => gameloop(pacman, ghosts), GLOBAL_SPEED);
 
+    // Gameloop
+    timer = setInterval(() => gameLoop(pacman, ghosts), GLOBAL_SPEED);
 }
 
-//Intialize game
+// Initialize game
 startButton.addEventListener('click', startGame);
